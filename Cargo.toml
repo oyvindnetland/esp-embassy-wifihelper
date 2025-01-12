@@ -1,0 +1,101 @@
+[package]
+name = "esp-embassy-wifihelper"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+log = { version = "0.4.21" }
+
+# dependencies for ESP
+
+esp-hal = { version = "0.22.0" }
+esp-hal-embassy = { version = "0.5.0" }
+esp-println = { version = "0.12.0", default-features = false, features = [
+    "log",
+    "jtag-serial",
+    "defmt-espflash",
+] }
+esp-wifi = { version = "0.11.0", features = ["log", "wifi", "utils"] }
+
+# dependencies for embassy
+embassy-executor = { version = "0.6.3" }
+embassy-time = { version = "0.3.0", features = ["generic-queue-8"] }
+embassy-net = { version = "0.5.0", features = [
+    "tcp",
+    "udp",
+    "dns",
+    "dhcpv4",
+    "medium-ethernet",
+    "proto-ipv6",
+] }
+smoltcp = { version = "0.11.0", default-features = false, features = [
+    "medium-ethernet",
+    "socket-raw",
+    "proto-ipv6",
+] }
+
+static_cell = { version = "2.0", features = ["nightly"] }
+heapless = "0.8.0"
+
+[dev-dependencies]
+embassy-executor = { version = "0.6.3", features = ["task-arena-size-12288"] }
+esp-alloc = { version = "0.5.0" }
+esp-backtrace = { version = "0.14.1", features = [
+    "exception-handler",
+    "panic-handler",
+    "println",
+] }
+
+[features]
+esp32 = [
+    "esp-hal/esp32",
+    "esp-backtrace/esp32",
+    "esp-hal-embassy/esp32",
+    "esp-println/esp32",
+    "esp-wifi/esp32",
+]
+esp32c2 = [
+    "esp-hal/esp32c2",
+    "esp-backtrace/esp32c2",
+    "esp-hal-embassy/esp32c2",
+    "esp-println/esp32c2",
+    "esp-wifi/esp32c2",
+]
+esp32c3 = [
+    "esp-hal/esp32c3",
+    "esp-backtrace/esp32c3",
+    "esp-hal-embassy/esp32c3",
+    "esp-println/esp32c3",
+    "esp-wifi/esp32c3",
+]
+esp32c6 = [
+    "esp-hal/esp32c6",
+    "esp-backtrace/esp32c6",
+    "esp-hal-embassy/esp32c6",
+    "esp-println/esp32c6",
+    "esp-wifi/esp32c6",
+]
+esp32h2 = [
+    "esp-hal/esp32h2",
+    "esp-backtrace/esp32h2",
+    "esp-hal-embassy/esp32h2",
+    "esp-println/esp32h2",
+    "esp-wifi/esp32h2",
+]
+esp32s2 = [
+    "esp-hal/esp32s2",
+    "esp-backtrace/esp32s2",
+    "esp-hal-embassy/esp32s2",
+    "esp-println/esp32s2",
+    "esp-wifi/esp32s2",
+]
+esp32s3 = [
+    "esp-hal/esp32s3",
+    "esp-backtrace/esp32s3",
+    "esp-hal-embassy/esp32s3",
+    "esp-println/esp32s3",
+    "esp-wifi/esp32s3",
+]
+
+[[example]]
+name = "wifi_example"
