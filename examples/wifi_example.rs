@@ -2,14 +2,14 @@
 #![no_main]
 
 use embassy_executor::Spawner;
+use embassy_net::dns::DnsQueryType;
 //use embassy_executor::Spawner;
 use embassy_time::{Duration, Timer};
 use esp_alloc as _;
 use esp_backtrace as _;
-use esp_embassy_wifi::WifiStack;
+use esp_embassy_wifihelper::WifiStack;
 use esp_hal::{clock::CpuClock, timer::timg::TimerGroup};
 use esp_println::println;
-use heapless::String;
 use log::info;
 
 const SSID: &str = env!("SSID");
@@ -39,6 +39,9 @@ async fn main(spawner: Spawner) {
 
     let config = wifi.wait_for_connected().await.unwrap();
     info!("Wifi connected with IP: {}", config.address);
+
+    let res = wifi.dns_query("www.google.com", DnsQueryType::A).await;
+    println!("dns: {:?}", res);
 
     loop {
         println!("tick");

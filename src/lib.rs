@@ -1,7 +1,10 @@
 #![cfg_attr(not(test), no_std)]
 
 use embassy_executor::Spawner;
-use embassy_net::{Runner, Stack, StackResources, StaticConfigV4};
+use embassy_net::{
+    dns::{self, DnsQueryType},
+    IpAddress, Runner, Stack, StackResources, StaticConfigV4,
+};
 use embassy_time::{Duration, Timer};
 use esp_hal::{
     peripheral::Peripheral,
@@ -18,7 +21,7 @@ use esp_wifi::{
     },
     EspWifiController,
 };
-use heapless::String;
+use heapless::{String, Vec};
 use log::{info, warn};
 
 macro_rules! mk_static {
@@ -85,6 +88,15 @@ impl WifiStack {
             }
             Timer::after(Duration::from_millis(500)).await;
         }
+    }
+
+    pub async fn dns_query(
+        &self,
+        addr: &str,
+        query_type: DnsQueryType,
+    ) -> Result<Vec<IpAddress, 1>, dns::Error> {
+        let res = self.stack.dns_query(addr, query_type).await?;
+        Ok(res)
     }
 }
 
