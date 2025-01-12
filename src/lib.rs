@@ -3,6 +3,7 @@
 use embassy_executor::Spawner;
 use embassy_net::{
     dns::{self, DnsQueryType},
+    tcp::{ConnectError, TcpSocket},
     IpAddress, Runner, Stack, StackResources, StaticConfigV4,
 };
 use embassy_time::{Duration, Timer};
@@ -97,6 +98,18 @@ impl WifiStack {
     ) -> Result<Vec<IpAddress, 1>, dns::Error> {
         let res = self.stack.dns_query(addr, query_type).await?;
         Ok(res)
+    }
+
+    pub async fn make_and_connect_tcp_socket<'a>(
+        &self,
+        addr: IpAddress,
+        port: u16,
+        rx_buffer: &'a mut [u8],
+        tx_buffer: &'a mut [u8],
+    ) -> Result<TcpSocket<'a>, ConnectError> {
+        let mut socket = TcpSocket::new(self.stack, rx_buffer, tx_buffer);
+        socket.connect((addr, port)).await?;
+        Ok(socket)
     }
 }
 
