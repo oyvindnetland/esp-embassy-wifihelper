@@ -20,4 +20,4 @@ let wifi = WifiStack::new(
 
 ## Supported devices
 
-This has been tested on esp32c3 only, but should work (with possibly minor changes) to other esp32 devices.
+This has been tested on esp32, esp32s3 and esp32c6, and is assumed to work on the remaining esp32 devices as well.
