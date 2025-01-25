@@ -42,7 +42,7 @@ impl WifiStack {
     pub fn new(
         spawner: Spawner,
         wifi: impl Peripheral<P = WIFI> + 'static,
-        timg0: impl Peripheral<P = TIMG0>,
+        timg0: impl Peripheral<P = TIMG0> + esp_hal::timer::timg::TimerGroupInstance,
         rng: impl Peripheral<P = RNG>,
         radio_clk: RADIO_CLK,
         ssid: String<32>,
