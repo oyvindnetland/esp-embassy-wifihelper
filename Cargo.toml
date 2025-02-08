@@ -5,17 +5,16 @@ edition = "2021"
 
 [dependencies]
 log = { version = "0.4.21" }
+static_cell = { version = "2.0", features = ["nightly"] }
+heapless = "0.8.0"
 
 # dependencies for ESP
 esp-hal = { version = "0.23.1" }
 esp-hal-embassy = { version = "0.6.0" }
-esp-println = { version = "0.13.0", default-features = false, features = [
-    "log",
-] }
 esp-wifi = { version = "0.12.0", features = ["log", "wifi", "utils"] }
 
 # dependencies for embassy
-embassy-executor = { version = "0.7.0" }
+embassy-executor = { version = "0.7.0", features = ["log"] }
 embassy-time = { version = "0.4.0", features = ["generic-queue-8"] }
 embassy-net = { version = "0.6.0", features = [
     "tcp",
@@ -31,13 +30,10 @@ smoltcp = { version = "0.12.0", default-features = false, features = [
     "proto-ipv4",
 ] }
 
-static_cell = { version = "2.0", features = ["nightly"] }
-heapless = "0.8.0"
-cfg-if = "1.0.0"
-embedded-io-async = "0.6.1"
-
 [dev-dependencies]
-embassy-executor = { version = "0.6.3", features = ["task-arena-size-20480"] }
+esp-println = { version = "0.13.0", default-features = false, features = [
+    "log",
+] }
 esp-alloc = { version = "0.6.0" }
 esp-backtrace = { version = "0.15.0", features = [
     "exception-handler",
@@ -46,61 +42,64 @@ esp-backtrace = { version = "0.15.0", features = [
 ] }
 
 [features]
-esp32 = [
-    "esp-hal/esp32",
+esp32 = ["esp-hal/esp32", "esp-hal-embassy/esp32", "esp-wifi/esp32"]
+esp32c2 = ["esp-hal/esp32c2", "esp-hal-embassy/esp32c2", "esp-wifi/esp32c2"]
+esp32c3 = ["esp-hal/esp32c3", "esp-hal-embassy/esp32c3", "esp-wifi/esp32c3"]
+esp32c6 = ["esp-hal/esp32c6", "esp-hal-embassy/esp32c6", "esp-wifi/esp32c6"]
+esp32h2 = ["esp-hal/esp32h2", "esp-hal-embassy/esp32h2", "esp-wifi/esp32h2"]
+esp32s2 = ["esp-hal/esp32s2", "esp-hal-embassy/esp32s2", "esp-wifi/esp32s2"]
+esp32s3 = ["esp-hal/esp32s3", "esp-hal-embassy/esp32s3", "esp-wifi/esp32s3"]
+
+esp32example = [
+    "esp32",
+    "embassy-executor/executor-thread",
+    "embassy-executor/task-arena-size-32768",
     "esp-backtrace/esp32",
-    "esp-hal-embassy/esp32",
     "esp-println/esp32",
-    "esp-println/auto",
-    "esp-wifi/esp32",
+    "esp-println/uart",
 ]
-esp32c2 = [
-    "esp-hal/esp32c2",
+esp32c2example = [
+    "esp32c2",
+    "embassy-executor/task-arena-size-32768",
     "esp-backtrace/esp32c2",
-    "esp-hal-embassy/esp32c2",
     "esp-println/esp32c2",
-    "esp-println/jtag-serial",
-    "esp-wifi/esp32c2",
+    "esp-println/uart",
 ]
-esp32c3 = [
-    "esp-hal/esp32c3",
+esp32c3example = [
+    "esp32c3",
+    "embassy-executor/task-arena-size-32768",
     "esp-backtrace/esp32c3",
-    "esp-hal-embassy/esp32c3",
     "esp-println/esp32c3",
     "esp-println/jtag-serial",
-    "esp-wifi/esp32c3",
 ]
-esp32c6 = [
-    "esp-hal/esp32c6",
+esp32c6example = [
+    "esp32c6",
+    "embassy-executor/task-arena-size-32768",
     "esp-backtrace/esp32c6",
-    "esp-hal-embassy/esp32c6",
     "esp-println/esp32c6",
     "esp-println/jtag-serial",
-    "esp-wifi/esp32c6",
 ]
-esp32h2 = [
-    "esp-hal/esp32h2",
+esp32h2example = [
+    "esp32h2",
+    "embassy-executor/task-arena-size-32768",
     "esp-backtrace/esp32h2",
-    "esp-hal-embassy/esp32h2",
     "esp-println/esp32h2",
     "esp-println/jtag-serial",
-    "esp-wifi/esp32h2",
 ]
-esp32s2 = [
-    "esp-hal/esp32s2",
+esp32s2example = [
+    "esp32s2",
+    "embassy-executor/task-arena-size-32768",
     "esp-backtrace/esp32s2",
-    "esp-hal-embassy/esp32s2",
     "esp-println/esp32s2",
-    "esp-println/auto",
-    "esp-wifi/esp32s2",
+    "esp-println/uart",
 ]
-esp32s3 = [
-    "esp-hal/esp32s3",
+esp32s3example = [
+    "esp32s3",
+    "embassy-executor/executor-thread",
+    "embassy-executor/task-arena-size-32768",
     "esp-backtrace/esp32s3",
-    "esp-hal-embassy/esp32s3",
     "esp-println/esp32s3",
     "esp-println/jtag-serial",
-    "esp-wifi/esp32s3",
 ]
 
 [[example]]
