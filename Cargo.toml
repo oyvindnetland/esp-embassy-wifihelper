@@ -1,7 +1,14 @@
 [package]
 name = "esp-embassy-wifihelper"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2021"
+license = "MIT"
+description = "Simple helper library to make it easier to connect to wifi with esp-embassy"
+homepage = "https://github.com/oyvindnetland/esp-embassy-wifihelper"
+repository = "https://github.com/oyvindnetland/esp-embassy-wifihelper"
+readme = "README.md"
+categories = ["embedded", "no-std"]
+keywords = ["esp32", "wifi", "embassy"]
 
 [dependencies]
 log = { version = "0.4.21" }
