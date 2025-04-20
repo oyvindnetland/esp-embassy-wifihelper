@@ -77,7 +77,7 @@ esp32c3example = [
     "embassy-executor/task-arena-size-32768",
     "esp-backtrace/esp32c3",
     "esp-println/esp32c3",
-    "esp-println/jtag-serial",
+    "esp-println/uart",
 ]
 esp32c6example = [
     "esp32c6",
