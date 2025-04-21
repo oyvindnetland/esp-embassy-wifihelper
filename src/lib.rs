@@ -22,6 +22,8 @@ use esp_wifi::{
     },
     EspWifiController,
 };
+#[cfg(feature = "esp32c3")]
+use esp_wifi_sys::include::esp_wifi_set_max_tx_power;
 use heapless::{String, Vec};
 use log::{info, warn};
 
@@ -138,6 +140,14 @@ async fn connection(
             controller.set_configuration(&client_config).unwrap();
             info!("Starting wifi");
             controller.start_async().await.unwrap();
+        }
+        #[cfg(feature = "esp32c3")]
+        unsafe {
+            // necessary to be able to establish a connection on esp32c3
+            let res = esp_wifi_set_max_tx_power(36);
+            if res != 0 {
+                warn!("failed to set esp_wifi_set_max_tx_power {}", res);
+            }
         }
 
         match controller.connect_async().await {
