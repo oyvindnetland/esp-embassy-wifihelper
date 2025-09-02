@@ -21,7 +21,7 @@ esp-hal-embassy = { version = "0.6.0" }
 esp-wifi = { version = "0.12.0", features = ["log", "wifi", "utils"] }
 
 # dependencies for embassy
-embassy-executor = { version = "0.7.0", features = ["log"] }
+embassy-executor = { version = "0.7.0" }
 embassy-time = { version = "0.4.0", features = ["generic-queue-8"] }
 embassy-sync = "0.6.1"
 embassy-net = { version = "0.6.0", features = [
