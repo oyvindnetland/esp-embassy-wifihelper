@@ -12,7 +12,6 @@ let wifi = WifiStack::new(
     peripherals.WIFI,
     peripherals.TIMG0,
     peripherals.RNG,
-    peripherals.RADIO_CLK,
     SSID.try_into().unwrap(),
     PASSWORD.try_into().unwrap(),
 );
@@ -32,7 +31,6 @@ let wifi = WifiStack::new_connect_later(
     peripherals.WIFI,
     peripherals.TIMG0,
     peripherals.RNG,
-    peripherals.RADIO_CLK,
     CHANNEL.receiver(),
 );
 ```
