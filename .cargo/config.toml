@@ -4,22 +4,32 @@ target = "xtensa-esp32-none-elf"
 [target.xtensa-esp32-none-elf]
 runner = "espflash flash --monitor"
 rustflags = ["-C", "link-arg=-nostartfiles", "-C", "link-arg=-Wl,-Tlinkall.x"]
+# for defmt
+# rustflags = ["-C", "link-arg=-nostartfiles", "-C", "link-arg=-Wl,-Tlinkall.x", "-C", "link-arg=-Tdefmt.x"]
 
 [target.xtensa-esp32s2-none-elf]
 runner = "espflash flash --monitor"
 rustflags = ["-C", "link-arg=-nostartfiles", "-C", "link-arg=-Wl,-Tlinkall.x"]
+# for defmt
+# rustflags = ["-C", "link-arg=-nostartfiles", "-C", "link-arg=-Wl,-Tlinkall.x", "-C", "link-arg=-Tdefmt.x"]
 
 [target.xtensa-esp32s3-none-elf]
 runner = "espflash flash --monitor"
 rustflags = ["-C", "link-arg=-nostartfiles", "-C", "link-arg=-Wl,-Tlinkall.x"]
+# for defmt
+# rustflags = ["-C", "link-arg=-nostartfiles", "-C", "link-arg=-Wl,-Tlinkall.x", "-C", "link-arg=-Tdefmt.x"]
 
 [target.riscv32imc-unknown-none-elf]
 runner = "espflash flash --monitor"
 rustflags = ["-C", "force-frame-pointers", "-C", "link-arg=-Tlinkall.x"]
+# for defmt
+# rustflags = ["-C", "force-frame-pointers", "-C", "link-arg=-Tlinkall.x", "-C", "link-arg=-Tdefmt.x"]
 
 [target.riscv32imac-unknown-none-elf]
 runner = "espflash flash --monitor"
 rustflags = ["-C", "force-frame-pointers", "-C", "link-arg=-Tlinkall.x"]
+# for defmt
+# rustflags = ["-C", "force-frame-pointers", "-C", "link-arg=-Tlinkall.x", "-C", "link-arg=-Tdefmt.x"]
 
 [env]
 ESP_LOG = "info"

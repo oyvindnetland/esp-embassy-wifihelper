@@ -8,14 +8,18 @@ use esp_alloc as _;
 use esp_backtrace as _;
 use esp_embassy_wifihelper::WifiStack;
 use esp_hal::{clock::CpuClock, timer::timg::TimerGroup};
-use esp_println::println;
+use esp_println as _; // global logger
+#[cfg(feature = "log")]
 use log::info;
+#[cfg(feature = "defmt")]
+use defmt::info;
 
 const SSID: &str = env!("SSID");
 const PASSWORD: &str = env!("PASSWORD");
 
 #[esp_hal_embassy::main]
 async fn main(spawner: Spawner) {
+    #[cfg(feature = "log")]
     esp_println::logger::init_logger_from_env();
     let config = esp_hal::Config::default().with_cpu_clock(CpuClock::max());
     let peripherals = esp_hal::init(config);
@@ -40,10 +44,10 @@ async fn main(spawner: Spawner) {
     info!("Wifi connected with IP: {}", config.address);
 
     let res = wifi.dns_query("www.google.com", DnsQueryType::A).await.unwrap();
-    println!("dns lookup of www.google.com: {:?}", res);
+    info!("dns lookup of www.google.com: {:?}", res);
 
     loop {
-        println!("tick");
+        info!("tick");
         Timer::after(Duration::from_millis(1000)).await;
     }
 }

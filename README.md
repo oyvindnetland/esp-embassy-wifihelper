@@ -48,3 +48,16 @@ let _ = CHANNEL.send(client_config).await;
 ## Supported devices
 
 This has been tested on esp32, esp32c3, esp32s3 and esp32c6, and is assumed to work on the remaining esp32 devices as well.
+
+## Examples
+
+Examples can be run with the following command:
+```sh
+# replace esp32 with correct device
+RUST_LOG=info cargo run --release --features esp32example --features log --target=xtensa-esp32-none-elf --example wifi_example 
+```
+
+or using defmt (also need change in config.toml):
+```sh
+DEFMT_LOG=info cargo run --release --features esp32example --features defmt --target=xtensa-esp32-none-elf --example wifi_example 
+```

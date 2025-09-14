@@ -23,7 +23,10 @@ use esp_wifi::{
 };
 #[cfg(feature = "esp32c3")]
 use esp_wifi_sys::include::esp_wifi_set_max_tx_power;
+#[cfg(feature = "log")]
 use log::warn;
+#[cfg(feature = "defmt")]
+use defmt::warn;
 
 pub struct WifiStack {
     pub stack: Stack<'static>,
@@ -160,7 +163,7 @@ async fn connecting_loop(
                 }
             }
             Err(e) => {
-                warn!("Failed to connect to wifi: {e:?}");
+                warn!("Failed to connect to wifi: {:?}", e);
                 Timer::after(Duration::from_millis(5000)).await
             }
         }
@@ -168,7 +171,7 @@ async fn connecting_loop(
 
     warn!(
         "Failed to connect to {} after {} retries",
-        client_config.as_client_conf_ref().unwrap().ssid,
+        client_config.as_client_conf_ref().unwrap().ssid.as_str(),
         retries
     );
 }

@@ -11,9 +11,10 @@ categories = ["embedded", "no-std"]
 keywords = ["esp32", "wifi", "embassy"]
 
 [dependencies]
-log = { version = "0.4.21" }
 heapless = "0.9"
 cfg-if = "1.0.0"
+log = { version = "0.4.21", optional = true}
+defmt = { version = "1.0.1", optional = true}
 
 # dependencies for ESP
 esp-hal = { version = "1.0.0-rc.0", default-features = false }
@@ -46,16 +47,12 @@ embedded-io-async = "0.6.1"
 embassy-futures = "0.1.1"
 esp-bootloader-esp-idf = "0.2.0"
 
-esp-println = { version = "0.15", default-features = false, features = [
-    "log-04",
-] }
+esp-println = { version = "0.15", default-features = false, features = ["auto"] }
 
 esp-backtrace = { version = "0.17", features = [
     "exception-handler",
     "panic-handler",
-    "println",
 ] }
-
 
 [features]
 espexample = [
@@ -63,6 +60,19 @@ espexample = [
     "esp-hal/rt",
     "embassy-executor/executor-thread",
     "embassy-executor/task-arena-size-32768",
+]
+
+log = [
+    "dep:log",
+    "esp-println/log-04",
+    "esp-backtrace/println",
+]
+defmt = [
+    "dep:defmt",
+    "esp-println/defmt-espflash",
+    "esp-backtrace/defmt",
+    "esp-wifi/defmt",
+    "smoltcp/defmt",
 ]
 
 esp32 = ["esp-hal/esp32", "esp-hal-embassy/esp32", "esp-wifi/esp32"]
@@ -85,7 +95,6 @@ esp32example = [
     "esp-bootloader-esp-idf/esp32",
     "esp-backtrace/esp32",
     "esp-println/esp32",
-    "esp-println/uart",
 ]
 esp32c2example = [
     "esp32c2",
@@ -93,7 +102,6 @@ esp32c2example = [
     "esp-bootloader-esp-idf/esp32c2",
     "esp-backtrace/esp32c2",
     "esp-println/esp32c2",
-    "esp-println/uart",
 ]
 esp32c3example = [
     "esp32c3",
@@ -101,7 +109,6 @@ esp32c3example = [
     "esp-bootloader-esp-idf/esp32c3",
     "esp-backtrace/esp32c3",
     "esp-println/esp32c3",
-    "esp-println/uart",
 ]
 esp32c6example = [
     "esp32c6",
@@ -109,7 +116,6 @@ esp32c6example = [
     "esp-bootloader-esp-idf/esp32c6",
     "esp-backtrace/esp32c6",
     "esp-println/esp32c6",
-    "esp-println/jtag-serial",
 ]
 esp32h2example = [
     "esp32h2",
@@ -117,7 +123,6 @@ esp32h2example = [
     "esp-bootloader-esp-idf/esp32h2",
     "esp-backtrace/esp32h2",
     "esp-println/esp32h2",
-    "esp-println/jtag-serial",
 ]
 esp32s2example = [
     "esp32s2",
@@ -125,7 +130,6 @@ esp32s2example = [
     "esp-bootloader-esp-idf/esp32s2",
     "esp-backtrace/esp32s2",
     "esp-println/esp32s2",
-    "esp-println/uart",
 ]
 esp32s3example = [
     "esp32s3",
@@ -133,7 +137,6 @@ esp32s3example = [
     "esp-bootloader-esp-idf/esp32s3",
     "esp-backtrace/esp32s3",
     "esp-println/esp32s3",
-    "esp-println/jtag-serial",
 ]
 
 [[example]]
