@@ -13,18 +13,23 @@ keywords = ["esp32", "wifi", "embassy"]
 [dependencies]
 heapless = "0.9"
 cfg-if = "1.0.0"
-log = { version = "0.4.21", optional = true}
-defmt = { version = "1.0.1", optional = true}
+
+# logging dependencies, use feature log or defmt to enable
+log = { version = "0.4.21", optional = true }
+defmt = { version = "1.0.1", optional = true }
+defmt-rtt = { version = "1.1", optional = true }
 
 # dependencies for ESP
-esp-hal = { version = "1.0.0-rc.0", default-features = false }
-esp-hal-embassy = { version = "^0.9" }
-esp-wifi = { version = "0.15", features = ["wifi"] }
-esp-alloc = { version = "0.8" }
+esp-hal = { version = "1.0", default-features = false }
+esp-rtos = { version = "0.2", features = ["embassy", "esp-radio"] }
+esp-bootloader-esp-idf = "0.2"
+esp-radio = { version = "0.17", features = ["wifi"] }
+esp-alloc = { version = "0.9" }
+esp-wifi-sys = { version = "0.8.1", default-features = false, optional = true }
 
 # dependencies for embassy
-embassy-executor = "0.7"
-embassy-time = { version = "0.4", features = ["generic-queue-8"] }
+embassy-executor = "0.9"
+embassy-time = "0.5"
 embassy-sync = "0.7"
 embassy-net = { version = "0.6", features = [
     "tcp",
@@ -39,55 +44,49 @@ smoltcp = { version = "0.12", default-features = false, features = [
     "socket-raw",
     "proto-ipv4",
 ] }
-esp-wifi-sys = { version = "0.7", default-features = false, optional = true }
-
-embedded-io-async = "0.6.1"
 
 [dev-dependencies]
-embassy-futures = "0.1.1"
-esp-bootloader-esp-idf = "0.2.0"
-
-esp-println = { version = "0.15", default-features = false, features = ["auto"] }
-
-esp-backtrace = { version = "0.17", features = [
-    "exception-handler",
-    "panic-handler",
+esp-println = { version = "0.16", default-features = false, features = [
+    "auto",
 ] }
+esp-backtrace = { version = "0.18", features = ["panic-handler"] }
 
 [features]
-espexample = [
-    "esp-hal/unstable",
-    "esp-hal/rt",
-    "embassy-executor/executor-thread",
-    "embassy-executor/task-arena-size-32768",
-]
-
+# features for log/defmt
 log = [
     "dep:log",
-    "esp-println/log-04",
+    "esp-hal/log-04",
+    "esp-rtos/log-04",
     "esp-backtrace/println",
+    "esp-println/log-04",
+    "esp-radio/log-04",
 ]
 defmt = [
     "dep:defmt",
-    "esp-println/defmt-espflash",
+    "esp-hal/defmt",
+    "esp-rtos/defmt",
     "esp-backtrace/defmt",
-    "esp-wifi/defmt",
+    "esp-println/defmt-espflash",
+    "esp-radio/defmt",
     "smoltcp/defmt",
 ]
 
-esp32 = ["esp-hal/esp32", "esp-hal-embassy/esp32", "esp-wifi/esp32"]
-esp32c2 = ["esp-hal/esp32c2", "esp-hal-embassy/esp32c2", "esp-wifi/esp32c2"]
+# features for different esp chips
+esp32 = ["esp-hal/esp32", "esp-rtos/esp32", "esp-radio/esp32"]
+esp32c2 = ["esp-hal/esp32c2", "esp-rtos/esp32c2", "esp-radio/esp32c2"]
 esp32c3 = [
     "esp-hal/esp32c3",
-    "esp-hal-embassy/esp32c3",
-    "esp-wifi/esp32c3",
+    "esp-rtos/esp32c3",
+    "esp-radio/esp32c3",
     "dep:esp-wifi-sys",
     "esp-wifi-sys/esp32c3",
 ]
-esp32c6 = ["esp-hal/esp32c6", "esp-hal-embassy/esp32c6", "esp-wifi/esp32c6"]
-esp32h2 = ["esp-hal/esp32h2", "esp-hal-embassy/esp32h2", "esp-wifi/esp32h2"]
-esp32s2 = ["esp-hal/esp32s2", "esp-hal-embassy/esp32s2", "esp-wifi/esp32s2"]
-esp32s3 = ["esp-hal/esp32s3", "esp-hal-embassy/esp32s3", "esp-wifi/esp32s3"]
+esp32c6 = ["esp-hal/esp32c6", "esp-rtos/esp32c6", "esp-radio/esp32c6"]
+esp32s2 = ["esp-hal/esp32s2", "esp-rtos/esp32s2", "esp-radio/esp32s2"]
+esp32s3 = ["esp-hal/esp32s3", "esp-rtos/esp32s3", "esp-radio/esp32s3"]
+
+# features for running the examples in this crate on different esp chips
+espexample = ["defmt", "esp-hal/unstable", "esp-backtrace/panic-handler"]
 
 esp32example = [
     "esp32",
@@ -113,16 +112,10 @@ esp32c3example = [
 esp32c6example = [
     "esp32c6",
     "espexample",
+    "dep:defmt-rtt",
     "esp-bootloader-esp-idf/esp32c6",
     "esp-backtrace/esp32c6",
     "esp-println/esp32c6",
-]
-esp32h2example = [
-    "esp32h2",
-    "espexample",
-    "esp-bootloader-esp-idf/esp32h2",
-    "esp-backtrace/esp32h2",
-    "esp-println/esp32h2",
 ]
 esp32s2example = [
     "esp32s2",
@@ -134,6 +127,7 @@ esp32s2example = [
 esp32s3example = [
     "esp32s3",
     "espexample",
+    "dep:defmt-rtt",
     "esp-bootloader-esp-idf/esp32s3",
     "esp-backtrace/esp32s3",
     "esp-println/esp32s3",

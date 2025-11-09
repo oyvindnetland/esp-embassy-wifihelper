@@ -8,25 +8,22 @@ use embassy_net::{
 };
 use embassy_sync::{blocking_mutex::raw::CriticalSectionRawMutex, channel::Receiver};
 use embassy_time::{Duration, Timer};
-use esp_hal::{
-    peripherals::{RNG, TIMG0, WIFI},
-    rng::Rng,
-    timer::timg::TimerGroup,
-};
+use esp_hal::{peripherals::WIFI, rng::Rng};
 
 use alloc::boxed::Box;
 use alloc::string::String;
+#[cfg(feature = "defmt")]
+use defmt::warn;
 use embassy_net::{dns, dns::DnsQueryType};
-use esp_wifi::{
+use esp_radio::{
     init,
-    wifi::{ClientConfiguration, Configuration, WifiController, WifiDevice, WifiEvent, WifiState},
+    wifi::{self, ClientConfig, ModeConfig, WifiController, WifiDevice, WifiEvent},
+    Controller,
 };
 #[cfg(feature = "esp32c3")]
 use esp_wifi_sys::include::esp_wifi_set_max_tx_power;
 #[cfg(feature = "log")]
 use log::warn;
-#[cfg(feature = "defmt")]
-use defmt::warn;
 
 pub struct WifiStack {
     pub stack: Stack<'static>,
@@ -36,17 +33,15 @@ impl WifiStack {
     fn new_internal(
         spawner: Spawner,
         wifi: WIFI<'static>,
-        timg0: TIMG0<'static>,
-        rng: RNG,
         ssid: Option<String>,
         password: Option<String>,
-        rx: Option<Receiver<'static, CriticalSectionRawMutex, ClientConfiguration, 1>>,
+        rx: Option<Receiver<'static, CriticalSectionRawMutex, ModeConfig, 1>>,
     ) -> Self {
-        let timg0 = TimerGroup::new(timg0);
-        let mut rng = Rng::new(rng);
+        let rng = Rng::new();
 
-        let init = Box::leak(Box::new(init(timg0.timer0, rng.clone()).unwrap()));
-        let (controller, interfaces) = esp_wifi::wifi::new(init, wifi).unwrap();
+        let init: &'static Controller<'static> = Box::leak(Box::new(init().unwrap()));
+        let (controller, interfaces) = wifi::new(&init, wifi, Default::default()).unwrap();
+
         let wifi_interface = interfaces.sta;
 
         let config = embassy_net::Config::dhcpv4(Default::default());
@@ -74,25 +69,16 @@ impl WifiStack {
         Self { stack }
     }
 
-    pub fn new(
-        spawner: Spawner,
-        wifi: WIFI<'static>,
-        timg0: TIMG0<'static>,
-        rng: RNG,
-        ssid: String,
-        password: String,
-    ) -> Self {
-        Self::new_internal(spawner, wifi, timg0, rng, Some(ssid), Some(password), None)
+    pub fn new(spawner: Spawner, wifi: WIFI<'static>, ssid: String, password: String) -> Self {
+        Self::new_internal(spawner, wifi, Some(ssid), Some(password), None)
     }
 
     pub fn new_connect_later(
         spawner: Spawner,
         wifi: WIFI<'static>,
-        timg0: TIMG0<'static>,
-        rng: RNG,
-        rx: Receiver<'static, CriticalSectionRawMutex, ClientConfiguration, 1>,
+        rx: Receiver<'static, CriticalSectionRawMutex, ModeConfig, 1>,
     ) -> Self {
-        Self::new_internal(spawner, wifi, timg0, rng, None, None, Some(rx))
+        Self::new_internal(spawner, wifi, None, None, Some(rx))
     }
 
     pub async fn wait_for_connected(&self) -> Option<StaticConfigV4> {
@@ -132,14 +118,12 @@ impl WifiStack {
 
 async fn connecting_loop(
     mut controller: WifiController<'static>,
-    client_configuration: ClientConfiguration,
+    client_configuration: ModeConfig,
     retries: usize,
 ) {
-    let client_config = Configuration::Client(client_configuration);
-
     for _ in 0..retries {
         if !matches!(controller.is_started(), Ok(true)) {
-            controller.set_configuration(&client_config).unwrap();
+            controller.set_config(&client_configuration).unwrap();
             controller.start_async().await.unwrap();
         }
         #[cfg(feature = "esp32c3")]
@@ -152,16 +136,13 @@ async fn connecting_loop(
         }
 
         match controller.connect_async().await {
-            Ok(_) => {
-                match esp_wifi::wifi::wifi_state() {
-                    WifiState::StaConnected => {
-                        // wait until we're no longer connected
-                        controller.wait_for_event(WifiEvent::StaDisconnected).await;
-                        Timer::after(Duration::from_millis(5000)).await
-                    }
-                    _ => {}
+            Ok(_) => match esp_radio::wifi::sta_state() {
+                wifi::WifiStaState::Connected => {
+                    controller.wait_for_event(WifiEvent::StaDisconnected).await;
+                    Timer::after(Duration::from_millis(5000)).await
                 }
-            }
+                _ => {}
+            },
             Err(e) => {
                 warn!("Failed to connect to wifi: {:?}", e);
                 Timer::after(Duration::from_millis(5000)).await
@@ -170,19 +151,18 @@ async fn connecting_loop(
     }
 
     warn!(
-        "Failed to connect to {} after {} retries",
-        client_config.as_client_conf_ref().unwrap().ssid.as_str(),
-        retries
+        "Failed to connect to {:?} after {} retries",
+        client_configuration, retries
     );
 }
 
 #[embassy_executor::task]
 async fn connection(controller: WifiController<'static>, ssid: String, password: String) {
-    let client_config = ClientConfiguration {
-        ssid,
-        password,
-        ..Default::default()
-    };
+    let client_config = ModeConfig::Client(
+        ClientConfig::default()
+            .with_ssid(ssid)
+            .with_password(password),
+    );
 
     connecting_loop(controller, client_config, 10).await;
 }
@@ -190,7 +170,7 @@ async fn connection(controller: WifiController<'static>, ssid: String, password:
 #[embassy_executor::task]
 async fn connection_later(
     controller: WifiController<'static>,
-    rx: Receiver<'static, CriticalSectionRawMutex, ClientConfiguration, 1>,
+    rx: Receiver<'static, CriticalSectionRawMutex, ModeConfig, 1>,
 ) {
     let client_config = rx.receive().await;
     connecting_loop(controller, client_config, 10).await;
