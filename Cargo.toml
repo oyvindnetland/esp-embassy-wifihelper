@@ -72,18 +72,44 @@ defmt = [
 ]
 
 # features for different esp chips
-esp32 = ["esp-hal/esp32", "esp-rtos/esp32", "esp-radio/esp32"]
-esp32c2 = ["esp-hal/esp32c2", "esp-rtos/esp32c2", "esp-radio/esp32c2"]
+esp32 = [
+    "esp-hal/esp32",
+    "esp-rtos/esp32",
+    "esp-radio/esp32",
+    "esp-bootloader-esp-idf/esp32",
+]
+esp32c2 = [
+    "esp-hal/esp32c2",
+    "esp-rtos/esp32c2",
+    "esp-radio/esp32c2",
+    "esp-bootloader-esp-idf/esp32c2",
+]
 esp32c3 = [
     "esp-hal/esp32c3",
     "esp-rtos/esp32c3",
     "esp-radio/esp32c3",
     "dep:esp-wifi-sys",
     "esp-wifi-sys/esp32c3",
+    "esp-bootloader-esp-idf/esp32c3",
 ]
-esp32c6 = ["esp-hal/esp32c6", "esp-rtos/esp32c6", "esp-radio/esp32c6"]
-esp32s2 = ["esp-hal/esp32s2", "esp-rtos/esp32s2", "esp-radio/esp32s2"]
-esp32s3 = ["esp-hal/esp32s3", "esp-rtos/esp32s3", "esp-radio/esp32s3"]
+esp32c6 = [
+    "esp-hal/esp32c6",
+    "esp-rtos/esp32c6",
+    "esp-radio/esp32c6",
+    "esp-bootloader-esp-idf/esp32c6",
+]
+esp32s2 = [
+    "esp-hal/esp32s2",
+    "esp-rtos/esp32s2",
+    "esp-radio/esp32s2",
+    "esp-bootloader-esp-idf/esp32s2",
+]
+esp32s3 = [
+    "esp-hal/esp32s3",
+    "esp-rtos/esp32s3",
+    "esp-radio/esp32s3",
+    "esp-bootloader-esp-idf/esp32s3",
+]
 
 # features for running the examples in this crate on different esp chips
 espexample = ["defmt", "esp-backtrace/panic-handler"]
@@ -91,21 +117,18 @@ espexample = ["defmt", "esp-backtrace/panic-handler"]
 esp32example = [
     "esp32",
     "espexample",
-    "esp-bootloader-esp-idf/esp32",
     "esp-backtrace/esp32",
     "esp-println/esp32",
 ]
 esp32c2example = [
     "esp32c2",
     "espexample",
-    "esp-bootloader-esp-idf/esp32c2",
     "esp-backtrace/esp32c2",
     "esp-println/esp32c2",
 ]
 esp32c3example = [
     "esp32c3",
     "espexample",
-    "esp-bootloader-esp-idf/esp32c3",
     "esp-backtrace/esp32c3",
     "esp-println/esp32c3",
 ]
@@ -113,14 +136,12 @@ esp32c6example = [
     "esp32c6",
     "espexample",
     "dep:defmt-rtt",
-    "esp-bootloader-esp-idf/esp32c6",
     "esp-backtrace/esp32c6",
     "esp-println/esp32c6",
 ]
 esp32s2example = [
     "esp32s2",
     "espexample",
-    "esp-bootloader-esp-idf/esp32s2",
     "esp-backtrace/esp32s2",
     "esp-println/esp32s2",
 ]
@@ -128,7 +149,6 @@ esp32s3example = [
     "esp32s3",
     "espexample",
     "dep:defmt-rtt",
-    "esp-bootloader-esp-idf/esp32s3",
     "esp-backtrace/esp32s3",
     "esp-println/esp32s3",
 ]
