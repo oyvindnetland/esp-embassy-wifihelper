@@ -20,7 +20,7 @@ defmt = { version = "1.0.1", optional = true }
 defmt-rtt = { version = "1.1", optional = true }
 
 # dependencies for ESP
-esp-hal = { version = "1.0", default-features = false }
+esp-hal = { version = "1.0", features = ["unstable"] }
 esp-rtos = { version = "0.2", features = ["embassy", "esp-radio"] }
 esp-bootloader-esp-idf = "0.2"
 esp-radio = { version = "0.17", features = ["wifi"] }
@@ -86,7 +86,7 @@ esp32s2 = ["esp-hal/esp32s2", "esp-rtos/esp32s2", "esp-radio/esp32s2"]
 esp32s3 = ["esp-hal/esp32s3", "esp-rtos/esp32s3", "esp-radio/esp32s3"]
 
 # features for running the examples in this crate on different esp chips
-espexample = ["defmt", "esp-hal/unstable", "esp-backtrace/panic-handler"]
+espexample = ["defmt", "esp-backtrace/panic-handler"]
 
 esp32example = [
     "esp32",
