@@ -1,6 +1,6 @@
 [package]
 name = "esp-embassy-wifihelper"
-version = "0.3.0"
+version = "0.3.1"
 edition = "2021"
 license = "MIT"
 description = "Simple helper library to make it easier to connect to wifi with esp-embassy"
