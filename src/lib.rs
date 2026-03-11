@@ -1,3 +1,4 @@
+#![feature(impl_trait_in_assoc_type)]
 #![cfg_attr(not(test), no_std)]
 
 extern crate alloc;

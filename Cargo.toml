@@ -22,7 +22,7 @@ defmt-rtt = { version = "1.1", optional = true }
 # dependencies for ESP
 esp-hal = { version = "1.0", features = ["unstable"] }
 esp-rtos = { version = "0.2", features = ["embassy", "esp-radio"] }
-esp-bootloader-esp-idf = "0.2"
+esp-bootloader-esp-idf = "0.4"
 esp-radio = { version = "0.17", features = ["wifi"] }
 esp-alloc = { version = "0.9" }
 esp-wifi-sys = { version = "0.8.1", default-features = false, optional = true }
@@ -31,7 +31,7 @@ esp-wifi-sys = { version = "0.8.1", default-features = false, optional = true }
 embassy-executor = "0.9"
 embassy-time = "0.5"
 embassy-sync = "0.7"
-embassy-net = { version = "0.6", features = [
+embassy-net = { version = "0.8", features = [
     "tcp",
     "udp",
     "dns",
